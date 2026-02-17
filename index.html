@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Make Every Territory a Winning Territory â Demand Generation Ã Field Marketing</title>
+<style>
+  :root {
+    --navy: #0f3460;
+    --teal: #16a085;
+    --green: #2ecc71;
+    --orange: #f39c12;
+    --red: #e74c3c;
+    --blue: #3498db;
+    --light-bg: #f8f9fa;
+    --dark-bg: #1a1a2e;
+    --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--light-bg); color: #333; line-height: 1.6; }
+
+  /* Hero */
+  .hero { background: linear-gradient(135deg, var(--dark-bg) 0%, var(--navy) 100%); color: white; padding: 48px 40px 40px; }
+  .hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+  .hero .subtitle { font-size: 14px; color: rgba(255,255,255,0.65); margin-bottom: 28px; }
+  .kpi-row { display: flex; gap: 20px; flex-wrap: wrap; }
+  .kpi-card { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 18px 22px; min-width: 160px; flex: 1; border: 1px solid rgba(255,255,255,0.1); }
+  .kpi-card .value { font-size: 32px; font-weight: 700; color: var(--teal); }
+  .kpi-card .label { font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  /* Sections */
+  .section { max-width: 1200px; margin: 32px auto; padding: 0 24px; }
+  .card { background: white; border-radius: 12px; box-shadow: var(--card-shadow); padding: 32px; margin-bottom: 28px; }
+  .card h2 { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 6px; border-left: 4px solid var(--teal); padding-left: 14px; }
+  .card .desc { font-size: 14px; color: #666; margin-bottom: 20px; padding-left: 18px; }
+
+  /* Chart containers */
+  .chart-wrap { position: relative; height: 350px; margin-top: 12px; }
+
+  /* Scorecard */
+  .scorecard { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .scorecard th { background: var(--navy); color: white; padding: 10px 12px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .scorecard td { padding: 10px 12px; border-bottom: 1px solid #eee; }
+  .scorecard tr:hover { background: rgba(22,160,133,0.04); }
+  .scorecard .status-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .status-ahead { background: rgba(46,204,113,0.15); color: #27ae60; }
+  .status-ontrack { background: rgba(243,156,18,0.15); color: #e67e22; }
+  .status-behind { background: rgba(231,76,60,0.15); color: #c0392b; }
+  .row-ahead { background: rgba(46,204,113,0.04); }
+  .row-ontrack { background: rgba(243,156,18,0.03); }
+  .row-behind { background: rgba(231,76,60,0.04); }
+  .tier-badge { display: inline-block; padding: 1px 8px; border-radius: 8px; font-size: 10px; font-weight: 600; background: rgba(15,52,96,0.08); color: var(--navy); }
+
+  /* Insights */
+  .insight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-top: 16px; }
+  .insight-card { border-left: 4px solid var(--teal); padding: 20px; background: var(--light-bg); border-radius: 0 8px 8px 0; }
+  .insight-card h3 { font-size: 16px; color: var(--navy); margin-bottom: 8px; }
+  .insight-card p { font-size: 14px; color: #555; line-height: 1.7; }
+  .insight-card .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; }
+  .tag-theme { background: rgba(52,152,219,0.12); color: var(--blue); }
+  .tag-signal { background: rgba(243,156,18,0.12); color: var(--orange); }
+  .tag-opportunity { background: rgba(46,204,113,0.12); color: #27ae60; }
+
+  /* Action Plan */
+  .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 16px; }
+  @media (max-width: 900px) { .action-grid { grid-template-columns: 1fr; } }
+  .action-col { border-radius: 10px; padding: 24px; }
+  .action-col h3 { font-size: 16px; margin-bottom: 4px; }
+  .action-col .territories { font-size: 13px; color: #555; margin-bottom: 12px; }
+  .action-col p { font-size: 14px; color: #444; line-height: 1.7; }
+  .col-urgent { background: linear-gradient(135deg, rgba(231,76,60,0.06), rgba(231,76,60,0.02)); border: 1px solid rgba(231,76,60,0.15); }
+  .col-build { background: linear-gradient(135deg, rgba(243,156,18,0.06), rgba(243,156,18,0.02)); border: 1px solid rgba(243,156,18,0.15); }
+  .col-sustain { background: linear-gradient(135deg, rgba(46,204,113,0.06), rgba(46,204,113,0.02)); border: 1px solid rgba(46,204,113,0.15); }
+
+  /* Unassigned */
+  .unassigned-list { border-left: 3px solid var(--teal); padding-left: 20px; margin-top: 16px; }
+  .unassigned-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+  .unassigned-row .state { font-weight: 600; color: #333; }
+  .unassigned-row .pct { color: #888; font-size: 14px; }
+
+  /* Footer */
+  .footer { background: var(--dark-bg); color: rgba(255,255,255,0.5); text-align: center; padding: 24px; font-size: 12px; margin-top: 40px; }
+
+  /* Axiom banner */
+  .axiom { text-align: center; padding: 20px; font-size: 16px; font-weight: 600; color: var(--navy); background: rgba(22,160,133,0.06); border-radius: 8px; margin-bottom: 20px; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Make Every Territory a Winning Territory</h1>
+  <div class="subtitle">Demand Generation Ã Field Marketing Insights & Planning | Pipeline Generation Window: July 1, 2025 â Present | Data: HubSpot CRM</div>
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="value">3,195</div>
+      <div class="label">Quote Requests (JulâFeb)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="value">19</div>
+      <div class="label">Field Territories</div>
+    </div>
+    <div class="kpi-card">
+      <div class="value">6</div>
+      <div class="label">Territories Behind</div>
+    </div>
+    <div class="kpi-card">
+      <div class="value">252</div>
+      <div class="label">Unassigned QRs</div>
+    </div>
+    <div class="kpi-card">
+      <div class="value">95%</div>
+      <div class="label">Overall 3Ã Coverage</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+
+  <div class="axiom">Simplify and Go.</div>
+
+  <!-- Monthly QR Trend -->
+  <div class="card">
+    <h2>Monthly QR Momentum</h2>
+    <div class="desc">Quote requests by month across all territories â pipeline generation window starts July 1.</div>
+    <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+  </div>
+
+  <!-- Territory Health Matrix -->
+  <div class="card">
+    <h2>Territory Health Matrix</h2>
+    <div class="desc">QR volume (x) vs. 3Ã pipeline coverage (y). Bubble size = quota. Color = status.</div>
+    <div class="chart-wrap"><canvas id="matrixChart"></canvas></div>
+  </div>
+
+  <!-- Scorecard -->
+  <div class="card">
+    <h2>Territory Scorecard</h2>
+    <div class="desc">All field territories ranked by pipeline gap â reconciled to HubSpot as of today.</div>
+    <div style="overflow-x:auto;">
+      <table class="scorecard" id="scorecardTable">
+        <thead>
+          <tr>
+            <th>Territory</th>
+            <th>Rep</th>
+            <th>Tier</th>
+            <th>Quota</th>
+            <th>Pipeline</th>
+            <th>3Ã Req</th>
+            <th>Coverage</th>
+            <th>Gap</th>
+            <th>QRs</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="scorecardBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Strategic Insights -->
+  <div class="card">
+    <h2>Strategic Themes</h2>
+    <div class="desc">Patterns emerging from the data that Demand Ã Field Marketing should align on.</div>
+    <div class="insight-grid">
+      <div class="insight-card">
+        <span class="tag tag-theme">Theme</span>
+        <h3>Conversion Efficiency Gap</h3>
+        <p>Several territories generate strong lead volume but haven't converted that activity into proportional pipeline. Great Lakes (138 QRs, 29% coverage), Upper Midwest (141 QRs, 49%), and Carolinas (130 QRs, 25%) all show this pattern. The question isn't more leads â it's what happens after the lead comes in.</p>
+      </div>
+      <div class="insight-card">
+        <span class="tag tag-signal">Signal</span>
+        <h3>Low-Volume, Low-Coverage Territories</h3>
+        <p>Pacific NW (76 QRs, 21%), New England (79 QRs, 31%), and Gulf Coast (59 QRs, 50%) are generating fewer leads and building less pipeline. These territories need both demand generation lift and closer field partnership to create pipeline velocity.</p>
+      </div>
+      <div class="insight-card">
+        <span class="tag tag-opportunity">Opportunity</span>
+        <h3>Unassigned White Space</h3>
+        <p>252 Quote Requests are sitting in territories with no assigned rep â 54% from New York alone. This is organic demand with zero field investment. Understanding what's driving these inbounds could unlock new territory coverage strategies.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Plan -->
+  <div class="card">
+    <h2>Demand Ã Field Marketing Action Plan</h2>
+    <div class="desc">Three tiers of focus. Same goal: make every territory a winning territory.</div>
+    <div class="action-grid">
+      <div class="action-col col-urgent">
+        <h3>ð´ Close the Gap</h3>
+        <div class="territories">International, Indiana / Catholic Diocese, New England, Great Lakes, Carolinas, Pacific Northwest</div>
+        <p>These territories are below 33% of 3Ã coverage. Demand and Field need to jointly diagnose whether the problem is lead volume, lead quality, conversion, or deal velocity â then align on a focused plan. Not every territory needs the same playbook.</p>
+      </div>
+      <div class="action-col col-build">
+        <h3>ð¡ Build Momentum</h3>
+        <div class="territories">Southwest, Mountain West, MA/NJ, Lone Star, TN/OH, KY/PA, Gulf Coast, Upper Midwest, Frontier, SoCal</div>
+        <p>These territories are making progress but still have significant pipeline gaps. The opportunity is to identify what's working and double down. Where are reps converting best? Which lead sources are producing pipeline? Scale what's proven.</p>
+      </div>
+      <div class="action-col col-sustain">
+        <h3>ð¢ Protect & Extend</h3>
+        <div class="territories">NorCal, Mid Atlantic, Southeast</div>
+        <p>Strong pipeline position, but the job isn't done. Focus here is ensuring deal progression, maintaining close rates, and looking for expansion opportunities within existing pipeline. Don't over-rotate â sustain the winning formula.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unassigned -->
+  <div class="card">
+    <h2>Unassigned Territory Opportunity</h2>
+    <div class="desc">252 QRs with no assigned rep â organic demand signaling market interest.</div>
+    <div class="unassigned-list">
+      <div class="unassigned-row">
+        <span class="state">New York â 137 QRs</span>
+        <span class="pct">54%</span>
+      </div>
+      <div class="unassigned-row">
+        <span class="state">Missouri â 42 QRs</span>
+        <span class="pct">17%</span>
+      </div>
+      <div class="unassigned-row">
+        <span class="state">Kansas â 28 QRs</span>
+        <span class="pct">11%</span>
+      </div>
+      <div class="unassigned-row">
+        <span class="state">Iowa â 17 QRs</span>
+        <span class="pct">7%</span>
+      </div>
+      <div class="unassigned-row">
+        <span class="state">Other â 28 QRs</span>
+        <span class="pct">11%</span>
+      </div>
+    </div>
+    <p style="margin-top:16px; font-size:14px; color:#555; border-left:3px solid var(--orange); padding-left:14px;">
+      <strong>Insight:</strong> New York alone accounts for over half of unassigned demand. Missouri and Kansas together add another 28%. These aren't random â they represent consistent inbound interest from states with no active field coverage. Worth understanding what's driving this signal before deciding how to act on it.
+    </p>
+  </div>
+
+</div>
+
+<div class="footer">
+  Data sourced from HubSpot CRM | Pipeline Window: Jul 1, 2025 â Present | SchoolAI Demand Ã Field Marketing Planning
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const territories = [{"territory": "NorCal (Northern CA + LAUSD)", "tier": "Growth", "rep": "Clint Schiffman", "quota": 800000, "pipeline_req": 2400000, "pipeline": 4143615.57, "coverage_pct": 172.7, "gap": -1743615.57, "status": "AHEAD", "qr_q3": 65, "qr_q4": 119, "qr_q1": 14, "qr_total": 198}, {"territory": "Mid Atlantic (DC, DE, MD, VA)", "tier": "Growth+", "rep": "Brad Weir", "quota": 800000, "pipeline_req": 2400000, "pipeline": 2855469.15, "coverage_pct": 119.0, "gap": -455469.15, "status": "AHEAD", "qr_q3": 37, "qr_q4": 67, "qr_q1": 6, "qr_total": 110}, {"territory": "Southeast (FL, GA, AL)", "tier": "Core", "rep": "Michelle Provenzano", "quota": 1500000, "pipeline_req": 4500000, "pipeline": 4311666.15, "coverage_pct": 95.8, "gap": 188333.85, "status": "AHEAD", "qr_q3": 104, "qr_q4": 163, "qr_q1": 27, "qr_total": 294}, {"territory": "Southwest (NM, NV)", "tier": "Growth", "rep": "Jace Palmer", "quota": 675000, "pipeline_req": 2025000, "pipeline": 1711905.7, "coverage_pct": 84.5, "gap": 313094.3, "status": "ON TRACK", "qr_q3": 9, "qr_q4": 17, "qr_q1": 3, "qr_total": 29}, {"territory": "Mountain West (UT, AZ, CO, ID, WY)", "tier": "Growth", "rep": "Jeff Couch", "quota": 800000, "pipeline_req": 2400000, "pipeline": 1925609.6, "coverage_pct": 80.2, "gap": 474390.4, "status": "ON TRACK", "qr_q3": 74, "qr_q4": 114, "qr_q1": 31, "qr_total": 219}, {"territory": "MA/NJ", "tier": "Growth+", "rep": "Monica Tinajero", "quota": 800000, "pipeline_req": 2400000, "pipeline": 1735569.1, "coverage_pct": 72.3, "gap": 664430.9, "status": "ON TRACK", "qr_q3": 43, "qr_q4": 81, "qr_q1": 16, "qr_total": 140}, {"territory": "Lone Star (TX, OK)", "tier": "Core", "rep": "Mike Powell", "quota": 1500000, "pipeline_req": 4500000, "pipeline": 3134527.4, "coverage_pct": 69.7, "gap": 1365472.6, "status": "ON TRACK", "qr_q3": 90, "qr_q4": 124, "qr_q1": 25, "qr_total": 239}, {"territory": "TN/OH", "tier": "Growth+", "rep": "Caroline Tell", "quota": 800000, "pipeline_req": 2400000, "pipeline": 1572773.85, "coverage_pct": 65.5, "gap": 827226.15, "status": "ON TRACK", "qr_q3": 56, "qr_q4": 80, "qr_q1": 9, "qr_total": 145}, {"territory": "KY/PA", "tier": "Growth+", "rep": "Brittany Freda", "quota": 800000, "pipeline_req": 2400000, "pipeline": 1250953, "coverage_pct": 52.1, "gap": 1149047, "status": "ON TRACK", "qr_q3": 35, "qr_q4": 64, "qr_q1": 18, "qr_total": 117}, {"territory": "Gulf Coast (LA, MS)", "tier": "Developing", "rep": "Donavon Harris", "quota": 675000, "pipeline_req": 2025000, "pipeline": 1016904.4, "coverage_pct": 50.2, "gap": 1008095.6, "status": "ON TRACK", "qr_q3": 18, "qr_q4": 37, "qr_q1": 4, "qr_total": 59}, {"territory": "Upper Midwest (MI/MN)", "tier": "Growth", "rep": "Hattie Strong", "quota": 800000, "pipeline_req": 2400000, "pipeline": 1163766.5, "coverage_pct": 48.5, "gap": 1236233.5, "status": "ON TRACK", "qr_q3": 41, "qr_q4": 79, "qr_q1": 21, "qr_total": 141}, {"territory": "Frontier (AK, ID, WV, WY)", "tier": "Developing", "rep": "Ben Jensen", "quota": 675000, "pipeline_req": 2025000, "pipeline": 873690.55, "coverage_pct": 43.1, "gap": 1151309.45, "status": "ON TRACK", "qr_q3": 10, "qr_q4": 36, "qr_q1": 5, "qr_total": 51}, {"territory": "SoCal (Southern CA)", "tier": "Growth", "rep": "Levi Gephart", "quota": 800000, "pipeline_req": 2400000, "pipeline": 880425.17, "coverage_pct": 36.7, "gap": 1519574.83, "status": "ON TRACK", "qr_q3": 14, "qr_q4": 25, "qr_q1": 3, "qr_total": 42}, {"territory": "International", "tier": "Growth", "rep": "Marcus Kingsley", "quota": 687000, "pipeline_req": 2061000, "pipeline": 655145, "coverage_pct": 31.8, "gap": 1405855, "status": "BEHIND", "qr_q3": 234, "qr_q4": 317, "qr_q1": 133, "qr_total": 684}, {"territory": "Indiana / Catholic Diocese", "tier": "Growth", "rep": "Matt Argubright", "quota": 800000, "pipeline_req": 2400000, "pipeline": 758893, "coverage_pct": 31.6, "gap": 1641107, "status": "BEHIND", "qr_q3": 11, "qr_q4": 36, "qr_q1": 5, "qr_total": 52}, {"territory": "New England (CT, ME, RI, NH, VT)", "tier": "Developing", "rep": "Sophie Carlson", "quota": 675000, "pipeline_req": 2025000, "pipeline": 623766.5, "coverage_pct": 30.8, "gap": 1401233.5, "status": "BEHIND", "qr_q3": 25, "qr_q4": 43, "qr_q1": 11, "qr_total": 79}, {"territory": "Great Lakes (WI, IL)", "tier": "Growth", "rep": "Sean Dunne", "quota": 800000, "pipeline_req": 2400000, "pipeline": 698420, "coverage_pct": 29.1, "gap": 1701580, "status": "BEHIND", "qr_q3": 35, "qr_q4": 90, "qr_q1": 13, "qr_total": 138}, {"territory": "Carolinas (NC, SC)", "tier": "Developing", "rep": "Nick Marcie", "quota": 800000, "pipeline_req": 2400000, "pipeline": 590200, "coverage_pct": 24.6, "gap": 1809800, "status": "BEHIND", "qr_q3": 55, "qr_q4": 65, "qr_q1": 10, "qr_total": 130}, {"territory": "Pacific Northwest (MT, OR, WA)", "tier": "Developing", "rep": "Kenna Torp", "quota": 675000, "pipeline_req": 2025000, "pipeline": 415565.2, "coverage_pct": 20.5, "gap": 1609434.8, "status": "BEHIND", "qr_q3": 21, "qr_q4": 46, "qr_q1": 9, "qr_total": 76}];
+const monthlyData = [{"month": "Jul 2025", "qr": 185}, {"month": "Aug 2025", "qr": 204}, {"month": "Sep 2025", "qr": 657}, {"month": "Oct 2025", "qr": 993}, {"month": "Nov 2025", "qr": 582}, {"month": "Dec 2025", "qr": 173}, {"month": "Jan 2026", "qr": 265}, {"month": "Feb 2026", "qr": 135}];
+const allTerritories = [{"territory": "State / Strategic", "tier": "Strategic", "rep": "Kevin Morrill", "quota": 1800000, "pipeline_req": 5400000, "pipeline": 19940615, "coverage_pct": 369.3, "gap": -14540615, "status": "AHEAD", "qr_q3": 0, "qr_q4": 0, "qr_q1": 0, "qr_total": 0}, {"territory": "NorCal (Northern CA + LAUSD)", "tier": "Growth", "rep": "Clint Schiffman", "quota": 800000, "pipeline_req": 2400000, "pipeline": 4143615.57, "coverage_pct": 172.7, "gap": -1743615.57, "status": "AHEAD", "qr_q3": 65, "qr_q4": 119, "qr_q1": 14, "qr_total": 198}, {"territory": "Mid Atlantic (DC, DE, MD, VA)", "tier": "Growth+", "rep": "Brad Weir", "quota": 800000, "pipeline_req": 2400000, "pipeline": 2855469.15, "coverage_pct": 119.0, "gap": -455469.15, "status": "AHEAD", "qr_q3": 37, "qr_q4": 67, "qr_q1": 6, "qr_total": 110}, {"territory": "Higher Ed / Corrections", "tier": "Growth+", "rep": "Dee Bohne", "quota": 687500, "pipeline_req": 2062500, "pipeline": 2006363, "coverage_pct": 97.3, "gap": 56137, "status": "AHEAD", "qr_q3": 0, "qr_q4": 0, "qr_q1": 0, "qr_total": 0}, {"territory": "Southeast (FL, GA, AL)", "tier": "Core", "rep": "Michelle Provenzano", "quota": 1500000, "pipeline_req": 4500000, "pipeline": 4311666.15, "coverage_pct": 95.8, "gap": 188333.85, "status": "AHEAD", "qr_q3": 104, "qr_q4": 163, "qr_q1": 27, "qr_total": 294}, {"territory": "Southwest (NM, NV)", "tier": "Growth", "rep": "Jace Palmer", "quota": 675000, "pipeline_req": 2025000, "pipeline": 1711905.7, "coverage_pct": 84.5, "gap": 313094.3, "status": "ON TRACK", "qr_q3": 9, "qr_q4": 17, "qr_q1": 3, "qr_total": 29}, {"territory": "Mountain West (UT, AZ, CO, ID, WY)", "tier": "Growth", "rep": "Jeff Couch", "quota": 800000, "pipeline_req": 2400000, "pipeline": 1925609.6, "coverage_pct": 80.2, "gap": 474390.4, "status": "ON TRACK", "qr_q3": 74, "qr_q4": 114, "qr_q1": 31, "qr_total": 219}, {"territory": "MA/NJ", "tier": "Growth+", "rep": "Monica Tinajero", "quota": 800000, "pipeline_req": 2400000, "pipeline": 1735569.1, "coverage_pct": 72.3, "gap": 664430.9, "status": "ON TRACK", "qr_q3": 43, "qr_q4": 81, "qr_q1": 16, "qr_total": 140}, {"territory": "Lone Star (TX, OK)", "tier": "Core", "rep": "Mike Powell", "quota": 1500000, "pipeline_req": 4500000, "pipeline": 3134527.4, "coverage_pct": 69.7, "gap": 1365472.6, "status": "ON TRACK", "qr_q3": 90, "qr_q4": 124, "qr_q1": 25, "qr_total": 239}, {"territory": "TN/OH", "tier": "Growth+", "rep": "Caroline Tell", "quota": 800000, "pipeline_req": 2400000, "pipeline": 1572773.85, "coverage_pct": 65.5, "gap": 827226.15, "status": "ON TRACK", "qr_q3": 56, "qr_q4": 80, "qr_q1": 9, "qr_total": 145}, {"territory": "KY/PA", "tier": "Growth+", "rep": "Brittany Freda", "quota": 800000, "pipeline_req": 2400000, "pipeline": 1250953, "coverage_pct": 52.1, "gap": 1149047, "status": "ON TRACK", "qr_q3": 35, "qr_q4": 64, "qr_q1": 18, "qr_total": 117}, {"territory": "Gulf Coast (LA, MS)", "tier": "Developing", "rep": "Donavon Harris", "quota": 675000, "pipeline_req": 2025000, "pipeline": 1016904.4, "coverage_pct": 50.2, "gap": 1008095.6, "status": "ON TRACK", "qr_q3": 18, "qr_q4": 37, "qr_q1": 4, "qr_total": 59}, {"territory": "Upper Midwest (MI/MN)", "tier": "Growth", "rep": "Hattie Strong", "quota": 800000, "pipeline_req": 2400000, "pipeline": 1163766.5, "coverage_pct": 48.5, "gap": 1236233.5, "status": "ON TRACK", "qr_q3": 41, "qr_q4": 79, "qr_q1": 21, "qr_total": 141}, {"territory": "Frontier (AK, ID, WV, WY)", "tier": "Developing", "rep": "Ben Jensen", "quota": 675000, "pipeline_req": 2025000, "pipeline": 873690.55, "coverage_pct": 43.1, "gap": 1151309.45, "status": "ON TRACK", "qr_q3": 10, "qr_q4": 36, "qr_q1": 5, "qr_total": 51}, {"territory": "SoCal (Southern CA)", "tier": "Growth", "rep": "Levi Gephart", "quota": 800000, "pipeline_req": 2400000, "pipeline": 880425.17, "coverage_pct": 36.7, "gap": 1519574.83, "status": "ON TRACK", "qr_q3": 14, "qr_q4": 25, "qr_q1": 3, "qr_total": 42}, {"territory": "International", "tier": "Growth", "rep": "Marcus Kingsley", "quota": 687000, "pipeline_req": 2061000, "pipeline": 655145, "coverage_pct": 31.8, "gap": 1405855, "status": "BEHIND", "qr_q3": 234, "qr_q4": 317, "qr_q1": 133, "qr_total": 684}, {"territory": "Indiana / Catholic Diocese", "tier": "Growth", "rep": "Matt Argubright", "quota": 800000, "pipeline_req": 2400000, "pipeline": 758893, "coverage_pct": 31.6, "gap": 1641107, "status": "BEHIND", "qr_q3": 11, "qr_q4": 36, "qr_q1": 5, "qr_total": 52}, {"territory": "New England (CT, ME, RI, NH, VT)", "tier": "Developing", "rep": "Sophie Carlson", "quota": 675000, "pipeline_req": 2025000, "pipeline": 623766.5, "coverage_pct": 30.8, "gap": 1401233.5, "status": "BEHIND", "qr_q3": 25, "qr_q4": 43, "qr_q1": 11, "qr_total": 79}, {"territory": "Great Lakes (WI, IL)", "tier": "Growth", "rep": "Sean Dunne", "quota": 800000, "pipeline_req": 2400000, "pipeline": 698420, "coverage_pct": 29.1, "gap": 1701580, "status": "BEHIND", "qr_q3": 35, "qr_q4": 90, "qr_q1": 13, "qr_total": 138}, {"territory": "Carolinas (NC, SC)", "tier": "Developing", "rep": "Nick Marcie", "quota": 800000, "pipeline_req": 2400000, "pipeline": 590200, "coverage_pct": 24.6, "gap": 1809800, "status": "BEHIND", "qr_q3": 55, "qr_q4": 65, "qr_q1": 10, "qr_total": 130}, {"territory": "Pacific Northwest (MT, OR, WA)", "tier": "Developing", "rep": "Kenna Torp", "quota": 675000, "pipeline_req": 2025000, "pipeline": 415565.2, "coverage_pct": 20.5, "gap": 1609434.8, "status": "BEHIND", "qr_q3": 21, "qr_q4": 46, "qr_q1": 9, "qr_total": 76}];
+
+// --- Trend Chart ---
+var ctx1 = document.getElementById('trendChart').getContext('2d');
+new Chart(ctx1, {
+  type: 'line',
+  data: {
+    labels: monthlyData.map(d => d.month),
+    datasets: [{
+      label: 'Quote Requests',
+      data: monthlyData.map(d => d.qr),
+      borderColor: '#0f3460',
+      backgroundColor: 'rgba(15,52,96,0.08)',
+      borderWidth: 3, fill: true, tension: 0.4,
+      pointRadius: 6, pointBackgroundColor: '#0f3460',
+      pointBorderColor: '#fff', pointBorderWidth: 2, pointHoverRadius: 8
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// --- Matrix Chart ---
+var ctx2 = document.getElementById('matrixChart').getContext('2d');
+var matrixData = territories.map(t => ({
+  x: t.qr_total,
+  y: t.coverage_pct,
+  r: Math.max(6, Math.sqrt(t.quota / 800000) * 12),
+  label: t.territory.split('(')[0].trim(),
+  status: t.status
+}));
+var medianQR = territories.map(t=>t.qr_total).sort((a,b)=>a-b)[Math.floor(territories.length/2)];
+
+new Chart(ctx2, {
+  type: 'bubble',
+  data: {
+    datasets: [
+      { label: 'AHEAD', data: matrixData.filter(d=>d.status==='AHEAD'), backgroundColor: 'rgba(46,204,113,0.6)', borderColor: 'rgba(46,204,113,0.9)', borderWidth: 1 },
+      { label: 'ON TRACK', data: matrixData.filter(d=>d.status==='ON TRACK'), backgroundColor: 'rgba(243,156,18,0.6)', borderColor: 'rgba(243,156,18,0.9)', borderWidth: 1 },
+      { label: 'BEHIND', data: matrixData.filter(d=>d.status==='BEHIND'), backgroundColor: 'rgba(231,76,60,0.6)', borderColor: 'rgba(231,76,60,0.9)', borderWidth: 1 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      x: { title: { display: true, text: 'Quote Requests (JulâFeb)', font: {weight:'bold'} }, grid: { color: 'rgba(0,0,0,0.05)' } },
+      y: { title: { display: true, text: '3Ã Pipeline Coverage %', font: {weight:'bold'} }, grid: { color: 'rgba(0,0,0,0.05)' } }
+    },
+    plugins: {
+      tooltip: { callbacks: { label: ctx => ctx.raw.label + ': ' + ctx.raw.x + ' QRs, ' + ctx.raw.y.toFixed(1) + '% cov' } },
+      legend: { position: 'top' }
+    }
+  },
+  plugins: [{
+    afterDatasetsDraw: function(chart) {
+      var ctx = chart.ctx;
+      var yScale = chart.scales.y;
+      var xScale = chart.scales.x;
+      // 100% coverage line
+      if(yScale.min < 100 && yScale.max > 100) {
+        var y100 = yScale.getPixelForValue(100);
+        ctx.save(); ctx.setLineDash([6,4]); ctx.strokeStyle='rgba(46,204,113,0.5)'; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.moveTo(xScale.left, y100); ctx.lineTo(xScale.right, y100); ctx.stroke();
+        ctx.fillStyle='rgba(46,204,113,0.7)'; ctx.font='11px sans-serif'; ctx.fillText('100% coverage', xScale.left+4, y100-6);
+        ctx.restore();
+      }
+      // 33% coverage line (BEHIND threshold)
+      var y33 = yScale.getPixelForValue(33.33);
+      if(y33 > yScale.top && y33 < yScale.bottom) {
+        ctx.save(); ctx.setLineDash([4,4]); ctx.strokeStyle='rgba(231,76,60,0.4)'; ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.moveTo(xScale.left, y33); ctx.lineTo(xScale.right, y33); ctx.stroke();
+        ctx.fillStyle='rgba(231,76,60,0.6)'; ctx.font='10px sans-serif'; ctx.fillText('1Ã coverage (BEHIND threshold)', xScale.left+4, y33-5);
+        ctx.restore();
+      }
+    }
+  }]
+});
+
+// --- Scorecard ---
+var tbody = document.getElementById('scorecardBody');
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+function statusClass(s) { return s==='AHEAD'?'status-ahead':s==='ON TRACK'?'status-ontrack':'status-behind'; }
+function rowClass(s) { return s==='AHEAD'?'row-ahead':s==='ON TRACK'?'row-ontrack':'row-behind'; }
+
+// Sort by gap descending (biggest gaps first)
+var sorted = territories.slice().sort((a,b) => b.gap - a.gap);
+sorted.forEach(function(t) {
+  var tr = document.createElement('tr');
+  tr.className = rowClass(t.status);
+  var gapStr = t.gap > 0 ? '-' + fmt(t.gap) : '+' + fmt(Math.abs(t.gap));
+  tr.innerHTML = '<td><strong>' + t.territory + '</strong></td>' +
+    '<td>' + t.rep + '</td>' +
+    '<td><span class="tier-badge">' + t.tier + '</span></td>' +
+    '<td>' + fmt(t.quota) + '</td>' +
+    '<td>' + fmt(t.pipeline) + '</td>' +
+    '<td>' + fmt(t.pipeline_req) + '</td>' +
+    '<td>' + t.coverage_pct.toFixed(1) + '%</td>' +
+    '<td>' + gapStr + '</td>' +
+    '<td>' + t.qr_total + '</td>' +
+    '<td><span class="status-badge ' + statusClass(t.status) + '">' + t.status + '</span></td>';
+  tbody.appendChild(tr);
+});
+</script>
+</body>
+</html>
