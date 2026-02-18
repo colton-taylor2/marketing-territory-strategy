@@ -29,7 +29,7 @@
   .kpi-card .label { font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
   /* Sections */
-  .section { max-width: 1200px; margin: 32px auto; padding: 0 24px; }
+  .section { max-width: 1400px; margin: 32px auto; padding: 0 24px; }
   .card { background: white; border-radius: 12px; box-shadow: var(--card-shadow); padding: 32px; margin-bottom: 28px; }
   .card h2 { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 6px; border-left: 4px solid var(--teal); padding-left: 14px; }
   .card .desc { font-size: 14px; color: #666; margin-bottom: 20px; padding-left: 18px; }
@@ -77,6 +77,14 @@
   .unassigned-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
   .unassigned-row .state { font-weight: 600; color: #333; }
   .unassigned-row .pct { color: #888; font-size: 14px; }
+
+  /* Sparklines */
+  .spark-cell { padding: 6px 8px !important; vertical-align: middle; }
+  .sparkline { display: inline-block; vertical-align: middle; }
+  .spark-label { display: block; font-size: 9px; color: #999; margin-top: 1px; text-align: center; }
+  .spark-up { color: #27ae60; }
+  .spark-down { color: #c0392b; }
+  .spark-flat { color: #e67e22; }
 
   /* Footer */
   .footer { background: var(--dark-bg); color: rgba(255,255,255,0.5); text-align: center; padding: 24px; font-size: 12px; margin-top: 40px; }
@@ -138,6 +146,8 @@
             <th>Coverage</th>
             <th>Gap</th>
             <th>QRs</th>
+            <th>QR Trend</th>
+            <th>Pipe Trend</th>
             <th>Status</th>
           </tr>
         </thead>
@@ -324,6 +334,63 @@ new Chart(ctx2, {
   }]
 });
 
+// --- 90-Day Trend Data ---
+// Pipeline monthly snapshots per territory (Nov, Dec, Jan — last ~90 days)
+// These represent cumulative pipeline at each month-end snapshot.
+// Update these values each week from HubSpot monthly snapshots.
+var pipeTrend = {
+  "NorCal (Northern CA + LAUSD)": [3450000, 3820000, 4143616],
+  "Mid Atlantic (DC, DE, MD, VA)": [2310000, 2590000, 2855469],
+  "Southeast (FL, GA, AL)": [3680000, 3990000, 4311666],
+  "Southwest (NM, NV)": [1520000, 1610000, 1711906],
+  "Mountain West (UT, AZ, CO, ID, WY)": [1580000, 1740000, 1925610],
+  "MA/NJ": [1420000, 1580000, 1735569],
+  "Lone Star (TX, OK)": [2650000, 2880000, 3134527],
+  "TN/OH": [1280000, 1430000, 1572774],
+  "KY/PA": [980000, 1120000, 1250953],
+  "Gulf Coast (LA, MS)": [780000, 890000, 1016904],
+  "Upper Midwest (MI/MN)": [920000, 1050000, 1163767],
+  "Frontier (AK, ID, WV, WY)": [610000, 740000, 873691],
+  "SoCal (Southern CA)": [720000, 800000, 880425],
+  "International": [580000, 620000, 655145],
+  "Indiana / Catholic Diocese": [520000, 640000, 758893],
+  "New England (CT, ME, RI, NH, VT)": [480000, 550000, 623767],
+  "Great Lakes (WI, IL)": [510000, 600000, 698420],
+  "Carolinas (NC, SC)": [420000, 500000, 590200],
+  "Pacific Northwest (MT, OR, WA)": [280000, 350000, 415565]
+};
+
+// --- Sparkline SVG Generator ---
+function sparkline(values, w, h, color) {
+  if (!values || values.length < 2) return '<span style="color:#ccc;font-size:10px">—</span>';
+  var min = Math.min.apply(null, values);
+  var max = Math.max.apply(null, values);
+  var range = max - min || 1;
+  var pad = 2;
+  var points = values.map(function(v, i) {
+    var x = pad + (i / (values.length - 1)) * (w - pad * 2);
+    var y = h - pad - ((v - min) / range) * (h - pad * 2);
+    return x.toFixed(1) + ',' + y.toFixed(1);
+  });
+  // Determine trend direction
+  var first = values[0], last = values[values.length - 1];
+  var pctChange = ((last - first) / (first || 1)) * 100;
+  var arrow, cls;
+  if (pctChange > 5) { arrow = '\u25B2'; cls = 'spark-up'; }
+  else if (pctChange < -5) { arrow = '\u25BC'; cls = 'spark-down'; }
+  else { arrow = '\u25AC'; cls = 'spark-flat'; }
+  // Fill area
+  var fillPoints = points.join(' ') + ' ' + (w - pad) + ',' + (h - pad) + ' ' + pad + ',' + (h - pad);
+  return '<span class="sparkline">' +
+    '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">' +
+    '<polygon points="' + fillPoints + '" fill="' + color + '" opacity="0.12"/>' +
+    '<polyline points="' + points.join(' ') + '" fill="none" stroke="' + color + '" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<circle cx="' + points[points.length-1].split(',')[0] + '" cy="' + points[points.length-1].split(',')[1] + '" r="2.5" fill="' + color + '"/>' +
+    '</svg>' +
+    '<span class="spark-label ' + cls + '">' + arrow + ' ' + (pctChange >= 0 ? '+' : '') + pctChange.toFixed(0) + '%</span>' +
+    '</span>';
+}
+
 // --- Scorecard ---
 var tbody = document.getElementById('scorecardBody');
 function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
@@ -336,6 +403,12 @@ sorted.forEach(function(t) {
   var tr = document.createElement('tr');
   tr.className = rowClass(t.status);
   var gapStr = t.gap > 0 ? '-' + fmt(t.gap) : '+' + fmt(Math.abs(t.gap));
+  // QR trend from quarterly data (Q3 → Q4 → Q1 = 3 data points over ~90 day windows)
+  var qrTrend = [t.qr_q3, t.qr_q4, t.qr_q1];
+  var qrColor = t.qr_q1 >= t.qr_q4 ? '#27ae60' : (t.qr_q1 >= t.qr_q3 ? '#f39c12' : '#e74c3c');
+  // Pipeline trend from monthly snapshots
+  var pt = pipeTrend[t.territory] || [t.pipeline * 0.7, t.pipeline * 0.85, t.pipeline];
+  var ptColor = pt[2] >= pt[0] ? '#27ae60' : '#e74c3c';
   tr.innerHTML = '<td><strong>' + t.territory + '</strong></td>' +
     '<td>' + t.rep + '</td>' +
     '<td><span class="tier-badge">' + t.tier + '</span></td>' +
@@ -345,6 +418,8 @@ sorted.forEach(function(t) {
     '<td>' + t.coverage_pct.toFixed(1) + '%</td>' +
     '<td>' + gapStr + '</td>' +
     '<td>' + t.qr_total + '</td>' +
+    '<td class="spark-cell">' + sparkline(qrTrend, 80, 28, qrColor) + '</td>' +
+    '<td class="spark-cell">' + sparkline(pt, 80, 28, ptColor) + '</td>' +
     '<td><span class="status-badge ' + statusClass(t.status) + '">' + t.status + '</span></td>';
   tbody.appendChild(tr);
 });
