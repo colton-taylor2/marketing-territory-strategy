@@ -89,7 +89,20 @@
   /* Footer */
   .footer { background: var(--dark-bg); color: rgba(255,255,255,0.5); text-align: center; padding: 24px; font-size: 12px; margin-top: 40px; }
 
-</style>
+
+  /* Scorecard Filters */
+  .scorecard-filters { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-select { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; color: #333; background: white; cursor: pointer; min-width: 140px; }
+  .filter-select:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 2px rgba(22,160,133,0.15); }
+  .filter-search { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; color: #333; flex: 1; min-width: 200px; }
+  .filter-search:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 2px rgba(22,160,133,0.15); }
+  .filter-search::placeholder { color: #aaa; }
+  .filter-count { font-size: 12px; color: #888; white-space: nowrap; }
+  /* Total Row */
+  .scorecard-total { background: var(--navy) !important; }
+  .scorecard-total td { color: white; font-weight: 700; font-size: 13px; border-bottom: none; padding: 12px; }
+  .scorecard-total:hover { background: var(--navy) !important; }
+  </style>
 </head>
 <body>
 
@@ -133,6 +146,24 @@
   <div class="card">
     <h2>Territory Scorecard</h2>
     <div class="desc">All field territories ranked by pipeline gap — reconciled to HubSpot as of today.</div>
+    <div class="scorecard-filters">
+      <select id="filterTier" class="filter-select">
+        <option value="">All Tiers</option>
+        <option value="Growth">Growth</option>
+        <option value="Growth+">Growth+</option>
+        <option value="Core">Core</option>
+        <option value="Developing">Developing</option>
+        <option value="Strategic">Strategic</option>
+      </select>
+      <select id="filterStatus" class="filter-select">
+        <option value="">All Statuses</option>
+        <option value="AHEAD">Ahead</option>
+        <option value="ON TRACK">On Track</option>
+        <option value="BEHIND">Behind</option>
+      </select>
+      <input type="text" id="filterSearch" class="filter-search" placeholder="Search territory or rep...">
+      <span id="filterCount" class="filter-count">21 of 21 territories</span>
+    </div>
     <div style="overflow-x:auto;">
       <table class="scorecard" id="scorecardTable">
         <thead>
@@ -172,10 +203,10 @@
         <p>Pacific NW (76 QRs, 21%), New England (79 QRs, 31%), and Gulf Coast (59 QRs, 50%) are generating fewer leads and building less pipeline. These territories need both demand generation lift and closer field partnership to create pipeline velocity.</p>
       </div>
       <div class="insight-card">
-        <span class="tag tag-opportunity">Opportunity</span>
-        <h3>Full Territory Coverage Achieved</h3>
-            <p>After 2026 territory reconciliation, all 3,195 quote requests are now assigned across 21 territories. Previously unassigned states (NY, IN, AR, IA, ND, SD, HI, MO, KS) now have dedicated rep coverage. Zero whitespace remains — a strong foundation for the next planning cycle.</p>
-      </div>
+      <span class="tag tag-opportunity">Opportunity</span>
+      <h3>Near-AHEAD Acceleration</h3>
+      <p>Southwest (83.8%) and Mountain West (80.3%) are within striking distance of AHEAD status (85%). Together they need just $137K in combined pipeline to flip — the highest-leverage investment on the board. Meanwhile, 6 BEHIND territories generate 1,194 QRs (37% of all volume) but hold only 7% of total pipeline, signaling massive conversion potential waiting to be unlocked.</p>
+    </div>
     </div>
   </div>
 
@@ -380,32 +411,75 @@ function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
 function statusClass(s) { return s==='AHEAD'?'status-ahead':s==='ON TRACK'?'status-ontrack':'status-behind'; }
 function rowClass(s) { return s==='AHEAD'?'row-ahead':s==='ON TRACK'?'row-ontrack':'row-behind'; }
 
-// Sort by gap descending (biggest gaps first)
-var sorted = territories.slice().sort((a,b) => b.gap - a.gap);
-sorted.forEach(function(t) {
+function renderScorecard(data) {
+  tbody.innerHTML = '';
+  var sorted = data.slice().sort((a,b) => b.gap - a.gap);
+  sorted.forEach(function(t) {
+    var tr = document.createElement('tr');
+    tr.className = rowClass(t.status);
+    var gapStr = t.gap > 0 ? '-' + fmt(t.gap) : '+' + fmt(Math.abs(t.gap));
+    var qrTrend = [t.qr_q3, t.qr_q4, t.qr_q1];
+    var qrColor = t.qr_q1 >= t.qr_q4 ? '#27ae60' : (t.qr_q1 >= t.qr_q3 ? '#f39c12' : '#e74c3c');
+    var pt = pipeTrend[t.territory] || [t.pipeline * 0.7, t.pipeline * 0.85, t.pipeline];
+    var ptColor = pt[2] >= pt[0] ? '#27ae60' : '#e74c3c';
+    tr.innerHTML = '<td><strong>' + t.territory + '</strong></td>' +
+      '<td>' + t.rep + '</td>' +
+      '<td><span class="tier-badge">' + t.tier + '</span></td>' +
+      '<td>' + fmt(t.quota) + '</td>' +
+      '<td>' + fmt(t.pipeline) + '</td>' +
+      '<td>' + fmt(t.pipeline_req) + '</td>' +
+      '<td>' + t.coverage_pct.toFixed(1) + '%</td>' +
+      '<td>' + gapStr + '</td>' +
+      '<td>' + t.qr_total + '</td>' +
+      '<td class="spark-cell">' + sparkline(qrTrend, 80, 28, qrColor) + '</td>' +
+      '<td class="spark-cell">' + sparkline(pt, 80, 28, ptColor) + '</td>' +
+      '<td><span class="status-badge ' + statusClass(t.status) + '">' + t.status + '</span></td>';
+    tbody.appendChild(tr);
+  });
+
+  // Total row
+  var totals = data.reduce(function(a, t) {
+    a.quota += t.quota; a.pipeline += t.pipeline; a.pipeline_req += t.pipeline_req;
+    a.gap += t.gap; a.qrs += t.qr_total; return a;
+  }, { quota: 0, pipeline: 0, pipeline_req: 0, gap: 0, qrs: 0 });
+  var covPct = totals.pipeline_req > 0 ? (totals.pipeline / totals.pipeline_req * 100).toFixed(1) : '0.0';
+  var gapStr = totals.gap > 0 ? '-' + fmt(totals.gap) : '+' + fmt(Math.abs(totals.gap));
   var tr = document.createElement('tr');
-  tr.className = rowClass(t.status);
-  var gapStr = t.gap > 0 ? '-' + fmt(t.gap) : '+' + fmt(Math.abs(t.gap));
-  // QR trend from quarterly data (Q3 → Q4 → Q1 = 3 data points over ~90 day windows)
-  var qrTrend = [t.qr_q3, t.qr_q4, t.qr_q1];
-  var qrColor = t.qr_q1 >= t.qr_q4 ? '#27ae60' : (t.qr_q1 >= t.qr_q3 ? '#f39c12' : '#e74c3c');
-  // Pipeline trend from monthly snapshots
-  var pt = pipeTrend[t.territory] || [t.pipeline * 0.7, t.pipeline * 0.85, t.pipeline];
-  var ptColor = pt[2] >= pt[0] ? '#27ae60' : '#e74c3c';
-  tr.innerHTML = '<td><strong>' + t.territory + '</strong></td>' +
-    '<td>' + t.rep + '</td>' +
-    '<td><span class="tier-badge">' + t.tier + '</span></td>' +
-    '<td>' + fmt(t.quota) + '</td>' +
-    '<td>' + fmt(t.pipeline) + '</td>' +
-    '<td>' + fmt(t.pipeline_req) + '</td>' +
-    '<td>' + t.coverage_pct.toFixed(1) + '%</td>' +
+  tr.className = 'scorecard-total';
+  tr.innerHTML = '<td><strong>TOTAL (' + data.length + ')</strong></td>' +
+    '<td></td><td></td>' +
+    '<td>' + fmt(totals.quota) + '</td>' +
+    '<td>' + fmt(totals.pipeline) + '</td>' +
+    '<td>' + fmt(totals.pipeline_req) + '</td>' +
+    '<td>' + covPct + '%</td>' +
     '<td>' + gapStr + '</td>' +
-    '<td>' + t.qr_total + '</td>' +
-    '<td class="spark-cell">' + sparkline(qrTrend, 80, 28, qrColor) + '</td>' +
-    '<td class="spark-cell">' + sparkline(pt, 80, 28, ptColor) + '</td>' +
-    '<td><span class="status-badge ' + statusClass(t.status) + '">' + t.status + '</span></td>';
+    '<td>' + totals.qrs + '</td>' +
+    '<td></td><td></td><td></td>';
   tbody.appendChild(tr);
-});
+
+  // Update counter
+  var counter = document.getElementById('filterCount');
+  if (counter) counter.textContent = data.length + ' of ' + territories.length + ' territories';
+}
+
+function applyFilters() {
+  var tierVal = document.getElementById('filterTier').value;
+  var statusVal = document.getElementById('filterStatus').value;
+  var searchVal = document.getElementById('filterSearch').value.toLowerCase();
+  var filtered = territories.filter(function(t) {
+    if (tierVal && t.tier !== tierVal) return false;
+    if (statusVal && t.status !== statusVal) return false;
+    if (searchVal && t.territory.toLowerCase().indexOf(searchVal) === -1 && t.rep.toLowerCase().indexOf(searchVal) === -1) return false;
+    return true;
+  });
+  renderScorecard(filtered);
+}
+
+document.getElementById('filterTier').addEventListener('change', applyFilters);
+document.getElementById('filterStatus').addEventListener('change', applyFilters);
+document.getElementById('filterSearch').addEventListener('input', applyFilters);
+
+renderScorecard(territories);
 </script>
 </body>
 </html>
