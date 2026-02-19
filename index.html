@@ -114,6 +114,18 @@
   .spark-flat { color: #e67e22; }
 
   /* Footer */
+
+  /* Tab Navigation */
+  .tab-nav { background: white; border-bottom: 2px solid #e9ecef; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .tab-nav-inner { max-width: 1400px; margin: 0 auto; padding: 0 24px; display: flex; gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tab-btn { padding: 14px 24px; font-size: 14px; font-weight: 600; color: #666; background: none; border: none; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s ease; white-space: nowrap; font-family: inherit; }
+  .tab-btn:hover { color: var(--navy); background: rgba(15,52,96,0.03); }
+  .tab-btn.active { color: var(--navy); border-bottom-color: var(--teal); }
+  .tab-btn .tab-icon { margin-right: 6px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  @media (max-width: 600px) { .tab-btn { padding: 12px 16px; font-size: 13px; } }
+
   .footer { background: var(--dark-bg); color: rgba(255,255,255,0.5); text-align: center; padding: 24px; font-size: 12px; margin-top: 40px; }
 
 
@@ -160,8 +172,19 @@
   </div>
 </div>
 
+
+<div class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" data-tab="performance"><span class="tab-icon">&#x1F4CA;</span>Performance</button>
+    <button class="tab-btn" data-tab="strategy"><span class="tab-icon">&#x1F3AF;</span>Strategy</button>
+    <button class="tab-btn" data-tab="gr-intel"><span class="tab-icon">&#x1F3DB;</span>GR Intel</button>
+    <button class="tab-btn" data-tab="trends"><span class="tab-icon">&#x1F4C8;</span>Trends</button>
+  </div>
+</div>
+
 <div class="section">
 
+  <div class="tab-content active" id="tab-performance">
   <!-- Territory Health Matrix -->
   <div class="card">
     <h2>Territory Health Matrix</h2>
@@ -214,6 +237,9 @@
     </div>
   </div>
 
+  </div>
+
+  <div class="tab-content" id="tab-strategy">
   <!-- Strategic Insights -->
   <div class="card">
     <h2>Strategic Themes</h2>
@@ -260,6 +286,9 @@
     </div>
   </div>
 
+  </div>
+
+  <div class="tab-content" id="tab-gr-intel">
   <!-- Government Relations Intelligence -->
   <div class="card gr-section">
     <h2>Government Relations Intelligence x Territory Actions</h2>
@@ -329,6 +358,9 @@
     </div>
   </div>
 
+  </div>
+
+  <div class="tab-content" id="tab-trends">
   <!-- Unassigned -->
   <div class="card">
     <h2>Territory Coverage Status</h2>
@@ -352,7 +384,9 @@
 
 </div>
 
-<div class="footer">
+</div>
+
+  <div class="footer">
   Data sourced from HubSpot CRM | Pipeline Window: Jul 1, 2025 - Present | SchoolAI Demand x Field Marketing Planning
 </div>
 
@@ -576,6 +610,22 @@ document.getElementById('filterStatus').addEventListener('change', applyFilters)
 document.getElementById('filterSearch').addEventListener('input', applyFilters);
 
 renderScorecard(territories);
+
+// --- Tab Navigation ---
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var tabId = this.getAttribute('data-tab');
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    this.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+    document.getElementById('tab-' + tabId).classList.add('active');
+    window.scrollTo({ top: document.querySelector('.tab-nav').offsetTop, behavior: 'smooth' });
+    if (tabId === 'performance' || tabId === 'trends') {
+      window.dispatchEvent(new Event('resize'));
+    }
+  });
+});
+
 </script>
 </body>
 </html>
