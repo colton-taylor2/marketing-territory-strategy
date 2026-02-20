@@ -937,9 +937,9 @@ function filterAbmByTerritory(territory) {
       var statusDD = document.getElementById("abm-table-status-filter");
       var statusVal = statusDD ? statusDD.value : "";
       // Filter and render
-      renderAbmTable(territory || null, statusVal || null);
-      if (typeof renderAbmScatterChart === "function") renderAbmScatterChart(territory || null);
-      if (typeof renderAbmBarChart === "function") renderAbmBarChart(territory || null);
+      renderAbmTable(territory || "all", statusVal || "all");
+      if (typeof renderAbmScatterChart === "function") renderAbmScatterChart(territory || "all");
+      if (typeof renderAbmBarChart === "function") renderAbmBarChart(territory || "all");
     }
 
     function filterAbmTable() {
@@ -947,9 +947,9 @@ function filterAbmByTerritory(territory) {
       var sDD = document.getElementById("abm-table-status-filter");
       var territory = tDD ? tDD.value : "";
       var status = sDD ? sDD.value : "";
-      renderAbmTable(territory || null, status || null);
-      if (typeof renderAbmScatterChart === "function") renderAbmScatterChart(territory || null);
-      if (typeof renderAbmBarChart === "function") renderAbmBarChart(territory || null);
+      renderAbmTable(territory || "all", status || "all");
+      if (typeof renderAbmScatterChart === "function") renderAbmScatterChart(territory || "all");
+      if (typeof renderAbmBarChart === "function") renderAbmBarChart(territory || "all");
     }
 
 function populateAbmFilters() {
