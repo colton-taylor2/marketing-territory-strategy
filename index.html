@@ -354,7 +354,7 @@
       <div class="card">
         <h2>Territory Pipeline Opportunities</h2>
         <p class="desc">Untapped districts with organic adoption + engagement signals but NO open deals. Composite-scored from HubSpot CRM data (Feb 19, 2026).</p>
-        <div class="abm-kpi-row">
+        <div class="abm-kpi-row" id="abm-kpi-cards">
           <div class="abm-kpi-card"><div class="value" style="color:var(--teal)">91</div><div class="label">Districts Identified</div></div>
           <div class="abm-kpi-card"><div class="value" style="color:var(--red)">45</div><div class="label">BEHIND Territory Opps</div></div>
           <div class="abm-kpi-card"><div class="value" style="color:var(--orange)">46</div><div class="label">ON TRACK Territory Opps</div></div>
@@ -375,21 +375,22 @@
           <select id="abmStatusFilter" onchange="filterAbmTable()"><option value="all">All Statuses</option><option value="BEHIND">BEHIND</option><option value="ON TRACK">ON TRACK</option></select>
           <select id="abmTerritoryFilter" onchange="filterAbmTable()"><option value="all">All Territories</option></select>
           <input type="text" id="abmSearchInput" placeholder="Search district or state..." oninput="filterAbmTable()">
-          <span id="abmResultCount" style="font-size:12px;color:#888;white-space:nowrap;">91 of 91</span>
+          <span id="abmResultCount" style="font-size:12px;color:#888;white-space:nowrap;">100 of 100</span>
         </div>
         <div id="abmTerritoryGrid" class="abm-territory-grid"></div>
       </div>
 
       <div class="card">
         <h2>Full Opportunity Table</h2>
-        <p class="desc">All 91 districts ranked by composite score. Use filters above to narrow results.</p>
-        <div class="abm-chart-row">
+        <p class="desc">All 100 districts ranked by composite score. Use filters above to narrow results.</p>
+        <div id="abm-territory-grid" style="display:flex;flex-wrap:wrap;gap:12px;margin:16px 0;"></div>
+          <div class="abm-chart-row">
           <div style="position:relative;height:300px;"><canvas id="abmScatterChart"></canvas></div>
           <div style="position:relative;height:300px;"><canvas id="abmBarChart"></canvas></div>
         </div>
         <div class="abm-table-wrap">
           <table class="abm-table" id="abmFullTable">
-            <thead><tr><th>#</th><th>Score</th><th>Territory</th><th>Status</th><th>Rep</th><th>District</th><th>State</th><th>Enrollment</th><th>Est. Value</th><th>Enrollment</th><th>Starbridge</th><th>Forms</th><th>Visits</th><th>Lifecycle</th></tr></thead>
+            <thead><tr><th>#</th><th>Score</th><th>Territory</th><th>Status</th><th>Rep</th><th>District</th><th>State</th><th>Enrollment</th><th>Est. Value</th><th>Free Users</th><th>Starbridge</th><th>Forms</th><th>Visits</th><th>Lifecycle</th></tr></thead>
             <tbody id="abm-table-body"></tbody>
           </table>
         </div>
@@ -982,7 +983,7 @@ function renderAbmTable(territory, status) {
       '<td style="color:#334155">' + d.state + '</td>' +
       '<td style="color:#334155;text-align:right">' + d.enrollment.toLocaleString() + '</td>' +
       '<td style="color:#334155;text-align:right;font-weight:600">$' + (d.estValue/1000).toFixed(0) + 'K</td>' +
-      '<td style="color:#0f3460;font-weight:600;text-align:right">' + d.enrollment.toLocaleString() + '</td>' +
+      '<td style="color:#0f3460;font-weight:600;text-align:right">' + d.freeUsers.toLocaleString() + '</td>' +
       '<td style="color:#334155;text-align:center">' + d.starbridge + '</td>' +
       '<td style="color:#334155;text-align:right">' + d.forms + '</td>' +
       '<td style="color:#334155;text-align:right">' + d.visits + '</td>' +
