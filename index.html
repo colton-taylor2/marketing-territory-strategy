@@ -208,20 +208,24 @@
   <div class="subtitle">Demand Generation x Field Marketing Insights &amp; Planning | Pipeline Generation Window: July 1, 2025 - Present | Data: HubSpot CRM</div>
   <div class="kpi-row">
     <div class="kpi-card" style="border-left:4px solid #2ecc71">
-      <div class="value">5</div>
+      <div class="value" id="hero-ahead">--</div>
       <div class="label">Territories Ahead</div>
     </div>
     <div class="kpi-card" style="border-left:4px solid #f39c12">
-      <div class="value">10</div>
+      <div class="value" id="hero-ontrack">--</div>
       <div class="label">Territories On Track</div>
     </div>
     <div class="kpi-card" style="border-left:4px solid #e74c3c">
-      <div class="value">6</div>
+      <div class="value" id="hero-behind">--</div>
       <div class="label">Territories Behind</div>
     </div>
     <div class="kpi-card">
-      <div class="value">65%</div>
-      <div class="label">Overall 3x Coverage</div>
+      <div class="value" id="hero-median">--</div>
+      <div class="label">Median Territory 3x Coverage</div>
+    </div>
+    <div class="kpi-card">
+      <div class="value" id="hero-pct100">--</div>
+      <div class="label">≥ 100% 3x Coverage</div>
     </div>
   </div>
 </div>
@@ -636,6 +640,25 @@ var pipeTrend = {
 };
 
 // --- Sparkline SVG Generator ---
+
+  // === Dynamic Hero KPIs ===
+  function updateHeroKPIs() {
+    var ahead = territories.filter(function(t) { return t.status === "AHEAD"; }).length;
+    var ontrack = territories.filter(function(t) { return t.status === "ON TRACK"; }).length;
+    var behind = territories.filter(function(t) { return t.status === "BEHIND"; }).length;
+    var sorted = territories.map(function(t) { return t.coverage_pct; }).sort(function(a, b) { return a - b; });
+    var median = sorted[Math.floor(sorted.length / 2)];
+    var atOrAbove = territories.filter(function(t) { return t.coverage_pct >= 100; }).length;
+    var pct100 = Math.round(atOrAbove / territories.length * 100);
+    var el;
+    el = document.getElementById("hero-ahead"); if (el) el.textContent = ahead;
+    el = document.getElementById("hero-ontrack"); if (el) el.textContent = ontrack;
+    el = document.getElementById("hero-behind"); if (el) el.textContent = behind;
+    el = document.getElementById("hero-median"); if (el) el.textContent = median.toFixed(1) + "%";
+    el = document.getElementById("hero-pct100"); if (el) el.textContent = pct100 + "%";
+  }
+  updateHeroKPIs();
+
 function sparkline(values, w, h, color) {
   if (!values || values.length < 2) return '<span style="color:#ccc;font-size:10px">-</span>';
   var min = Math.min.apply(null, values);
